@@ -9,6 +9,7 @@ from .birthday import Birthday
 from .login import Login
 from .messenger import Messenger
 from .mysql import MySql
+from .schedule import Schedule
 
 
 def get_args():
@@ -21,7 +22,7 @@ def get_args():
 
     parser.add_argument('-b', '--birthday-wish', action='store_true',
                         help='Checks for birthdays today and sends birthday wishes')
-    parser.add_argument('-m', '--send-message',
+    parser.add_argument('-m', '--send-message', metavar='message',
                         help='Send a message to a friend or existing group conversation (--name)')
     parser.add_argument('-n', '--name',
                         help='Name of the friend, group conversation, or existing conversation. ' +
@@ -30,7 +31,7 @@ def get_args():
                              'for a Facebook friends with the specified name')
     parser.add_argument('--create-mysql-db', action='store_true',
                         help='Initializes the MySQL with a new database. Needs to be called before you can schedule any messages')
-    parser.add_argument('-s', '--schedule-message',
+    parser.add_argument('-s', '--schedule-message', metavar='message',
                         help='Schedule a message for a friend, requires --name, --date, and --time')
     parser.add_argument('-r', '--run-scheduled-messages',
                         help='Checks if there are any scheduled messages that should be sent and sends them')
@@ -65,6 +66,21 @@ def __main__():
     # Create MySQL DB
     elif args.create_mysql_db:
         MySql.create_db()
+    # Schedule a message
+    elif args.schedule_message:
+        # Check for missing args
+        if args.date is None:
+            print('Please supply the message with a --date DATE')
+            exit(0)
+        elif args.time is None:
+            print('Please supply the message with a --time TIME')
+            exit(0)
+        elif args.name is None:
+            print('Please supply the message with a --name NAME')
+            exit(0)
+
+        schedule = Schedule()
+        schedule.schedule_message(args.date, args.time, args.name, args.schedule_message)
 
     driver.quit()
 
