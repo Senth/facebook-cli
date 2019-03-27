@@ -1,17 +1,20 @@
 from random import seed
 from time import time
 from sys import exit
+from os import path
 import argparse
 
 from .driver import Driver
 from .birthday import Birthday
 from .login import Login
 from .messenger import Messenger
+from .mysql import MySql
 
 
 def get_args():
     # Get help description from file
-    with open('help-description', 'r') as description_file:
+    help_file = path.join(path.dirname(path.abspath(__file__)), 'help-description')
+    with open(help_file, 'r') as description_file:
         help_description = description_file.read()
 
     parser = argparse.ArgumentParser(description=help_description, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -25,8 +28,8 @@ def get_args():
                              'This first looks after existing conversations to the left in ' +
                              '"https://www.facebook.com/messages/", if not found there it will look ' +
                              'for a Facebook friends with the specified name')
-    parser.add_argument('--init-mysql',
-                        help='Initializes the mysql database. Needs to be called before you can schedule any messages')
+    parser.add_argument('--create-mysql-db', action='store_true',
+                        help='Initializes the MySQL with a new database. Needs to be called before you can schedule any messages')
     parser.add_argument('-s', '--schedule-message',
                         help='Schedule a message for a friend, requires --name, --date, and --time')
     parser.add_argument('-r', '--run-scheduled-messages',
@@ -43,10 +46,10 @@ def __main__():
 
     Driver.check_if_installed()
     driver = Driver.init_driver()
-    Login.login(driver)
 
     # Birthday
     if args.birthday_wish:
+        Login.login(driver)
         birthday = Birthday(driver)
         birthday.wish_birthday()
     # Send Message
@@ -56,8 +59,12 @@ def __main__():
             print('Please supply the message with a --name NAME')
             exit(0)
 
+        Login.login(driver)
         messenger = Messenger(driver)
         messenger.send_message(args.name, args.send_message)
+    # Create MySQL DB
+    elif args.create_mysql_db:
+        MySql.create_db()
 
     driver.quit()
 
