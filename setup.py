@@ -15,5 +15,8 @@ setup(
             'facebookcli=facebookcli.__main__:__main__'
         ],
     },
-    install_requires=['selenium'],
+    install_requires=[
+        'selenium',
+        'mysqlclient'
+    ],
 )
