@@ -1,0 +1,7 @@
+Facebook command line interface for helping automating certain tasks like:
+
+Birthday Wishes: Automatically post birthday wishes to your friends on their wall (through messenger coming soon)
+Messages: Send a message through FB Messenger
+Scheduled Messages: Schedule a message and send it to FB Messenger (comes with web interface)
+Run Scheduled Messages: Activate this to run the scheduled messages
+Install MYSQL database: Run this before you add scheduled messages
