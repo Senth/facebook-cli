@@ -1,4 +1,5 @@
 from getpass import getpass
+from datetime import datetime
 from MySQLdb._exceptions import OperationalError
 import MySQLdb
 
@@ -20,6 +21,29 @@ class MySql:
         cursor.execute(sql)
         cursor.close()
         self.connection.commit()
+
+    def get_messages_to_send(self):
+        """Get all messages that we want to send. Whose scheduled time has expired
+           :return [(id, name, message), (id, name, message)] 
+        """
+        print('Timestamp: ' + str(datetime.now()) + ', timestamp: ' + MySql._current_time())
+        sql = 'SELECT id, name, message FROM scheduled WHERE scheduled<' + MySql._current_time() + ' AND sent=NULL'
+        cursor = self.connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result
+
+
+    def set_message_as_sent(self, id):
+        sql = 'UPDATE scheduled SET sent=' + MySql._current_time() + ' WHERE id=' + str(id)
+        cursor = self.connection.cursor()
+        cursor.execute(sql)
+        cursor.close()
+        self.connection.commit()
+
+    @staticmethod
+    def _current_time():
+        return str(int(datetime.now().timestamp()))
 
     @staticmethod
     def create_db():

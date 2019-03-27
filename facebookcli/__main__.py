@@ -33,7 +33,7 @@ def get_args():
                         help='Initializes the MySQL with a new database. Needs to be called before you can schedule any messages')
     parser.add_argument('-s', '--schedule-message', metavar='message',
                         help='Schedule a message for a friend, requires --name, --date, and --time')
-    parser.add_argument('-r', '--run-scheduled-messages',
+    parser.add_argument('-r', '--run-scheduled-messages', action='store_true',
                         help='Checks if there are any scheduled messages that should be sent and sends them')
     parser.add_argument('-d', '--date', help='Date to send the scheduled message on in the format YYYY-MM-DD')
     parser.add_argument('-t', '--time', help='Time to send the scheduled message on in the format HH:MM (24-hours)')
@@ -81,6 +81,9 @@ def __main__():
 
         schedule = Schedule()
         schedule.schedule_message(args.date, args.time, args.name, args.schedule_message)
+    elif args.run_scheduled_messages:
+        schedule = Schedule()
+        schedule.run_scheduled_messages(driver)
 
     driver.quit()
 

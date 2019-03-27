@@ -52,8 +52,13 @@ class Messenger:
         page = 1
 
         while True:
-            print("Searching for conversation on page " + str(page))
+            print("Searching for '" + name + "' conversation on page " + str(page))
             people_elements = self.driver.find_elements_by_xpath(people_elements_search)
+
+            # Remove special case if we have unanswered messages
+            if page == 1 and len(people_elements) == 0:
+                people_elements_search = '//h3[@class="bw ba bx"]/a'
+                continue
 
             for person_element in people_elements:
                 found_person = person_element.text
@@ -87,7 +92,7 @@ class Messenger:
         page = 0
 
         while True:
-            print("Searching for friend on page " + str(page))
+            print("Searching for '" + name + "' friend on page " + str(page))
             friend_elements = self.driver.find_elements_by_xpath('//a[@class="bq"]')
             for friend_element in friend_elements:
                 name = friend_element.text

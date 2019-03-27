@@ -3,6 +3,8 @@ from sys import exit
 from datetime import datetime
 
 from .mysql import MySql
+from .messenger import Messenger
+from .login import Login
 
 class Schedule:
     def __init__(self):
@@ -31,3 +33,23 @@ class Schedule:
 
         self.mysql.schedule_message(unix_epoch_time, name, message)
         print('Scheduled message')
+
+    def run_scheduled_messages(self, driver):
+        # Get all scheduled messages
+        messages_to_send = self.mysql.get_messages_to_send()
+        print('Found ' + str(len(messages_to_send)) + ' to send')
+
+        if len(messages_to_send) > 0:
+            Login.login(driver)
+            messenger = Messenger(driver)
+
+        for message_to_send in messages_to_send:
+            id = message_to_send[0]
+            name = message_to_send[1]
+            message = message_to_send[2]
+
+            messenger.send_message(name, message)
+            
+            self.mysql.set_message_as_sent(id)
+
+        print('Sent all scheduled messages')
