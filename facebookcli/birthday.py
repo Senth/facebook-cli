@@ -13,28 +13,30 @@ class Birthday:
     _BIRTHDAY_PEOPLE_CSS_CLASS = 'bk bv'
     _NAME_CSS_CLASS = 'bx by bs'
 
-    @staticmethod
-    def wish_birthday(driver):
+    def __init__(self, driver):
+        self.driver = driver
+
+    def wish_birthday(self):
         """Checks if there are any friends to post a birthday wish for"""
-        driver.get('https://mbasic.facebook.com/events/birthdays/')
+        self.driver.get('https://mbasic.facebook.com/events/birthdays/')
         random_user_delay()
 
         more_people_to_post_to = True
 
         try:
             while more_people_to_post_to:
-                birthday_article_element = driver.find_element_by_xpath(
+                birthday_article_element = self.driver.find_element_by_xpath(
                     '//div[@title ="' + Birthday._BIRTHDAY_ARTICLE_TITLE + '"]')
                 birthday_people_element = birthday_article_element.find_elements_by_xpath(
                     './/div[@class ="' + Birthday._BIRTHDAY_PEOPLE_CSS_CLASS + '"]')
 
-                more_people_to_post_to = Birthday._wish_birthday_for_all(driver, birthday_people_element)
+                more_people_to_post_to = Birthday._wish_birthday_for_all(birthday_people_element)
 
         except NoSuchElementException:
             print('No more birthdays today')
 
     @staticmethod
-    def _wish_birthday_for_all(driver, people_elements):
+    def _wish_birthday_for_all(people_elements):
         """Iterate through all people """
         for person_element in people_elements:
             # Get name
@@ -44,7 +46,7 @@ class Birthday:
             # Get birthday wish and post
             if full_name in BIRTHDAY_MESSAGES:
                 message = Birthday._get_message(full_name)
-                posted = Birthday._wish_birthday(driver, person_element, full_name, message)
+                posted = Birthday._wish_birthday(person_element, message)
 
                 # Return because page has been updated and people_elements is now a stale element
                 if posted:
@@ -53,7 +55,7 @@ class Birthday:
         return False
 
     @staticmethod
-    def _wish_birthday(driver, person_element, full_name, message):
+    def _wish_birthday(person_element, message):
         """Post a birthday wish to the person if we haven't already done so"""
         try:
             # Get text box
@@ -69,7 +71,7 @@ class Birthday:
             return True
 
         except (ElementNotInteractableException, ElementNotVisibleException):
-            print('Already posted a wish for ' + full_name)
+            # print('Already posted a wish for ' + full_name)
             return False
 
     @staticmethod
