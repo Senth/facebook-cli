@@ -36,7 +36,7 @@ class Messenger:
         random_user_delay()
 
         send_button = self.driver.find_element_by_xpath('//input[@value="Send"]')
-        send_button.submit()
+#         send_button.submit()
         print('Message sent.')
 
     def _find_conversation_url(self, name):

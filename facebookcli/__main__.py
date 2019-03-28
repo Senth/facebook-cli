@@ -1,6 +1,7 @@
 from random import seed
 from time import time
 from sys import exit
+from sys import argv
 from os import path
 import argparse
 
@@ -22,7 +23,7 @@ def get_args():
 
     parser.add_argument('-b', '--birthday-wish', action='store_true',
                         help='Checks for birthdays today and sends birthday wishes')
-    parser.add_argument('-m', '--send-message', metavar='message',
+    parser.add_argument('-m', '--send-message', metavar='MESSAGE',
                         help='Send a message to a friend or existing group conversation (--name)')
     parser.add_argument('-n', '--name',
                         help='Name of the friend, group conversation, or existing conversation. ' +
@@ -31,12 +32,17 @@ def get_args():
                              'for a Facebook friends with the specified name')
     parser.add_argument('--create-mysql-db', action='store_true',
                         help='Initializes the MySQL with a new database. Needs to be called before you can schedule any messages')
-    parser.add_argument('-s', '--schedule-message', metavar='message',
+    parser.add_argument('-s', '--schedule-message', metavar='MESSAGE',
                         help='Schedule a message for a friend, requires --name, --date, and --time')
     parser.add_argument('-r', '--run-scheduled-messages', action='store_true',
                         help='Checks if there are any scheduled messages that should be sent and sends them')
     parser.add_argument('-d', '--date', help='Date to send the scheduled message on in the format YYYY-MM-DD')
     parser.add_argument('-t', '--time', help='Time to send the scheduled message on in the format HH:MM (24-hours)')
+    
+    # Display help if no arguments was passed
+    if len(argv) < 2:
+        parser.print_help()
+        exit(0)
 
     return parser.parse_args()
 
@@ -87,5 +93,3 @@ def __main__():
 
     driver.quit()
 
-
-__main__()
