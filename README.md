@@ -45,8 +45,6 @@ The `LC_CTYPE=en_US.UTF-8` is needed if messages or friend names has non ascii n
 usage: facebookcli [-h] [-b] [-m MESSAGE] [-n NAME] [--create-mysql-db]
                    [-s MESSAGE] [-r] [-d DATE] [-t TIME]
 
-Facebook command line interface for helping automating certain tasks like:
-
 optional arguments:
   -h, --help            show this help message and exit
   -b, --birthday-wish   Checks for birthdays today and sends birthday wishes
