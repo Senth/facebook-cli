@@ -35,8 +35,9 @@ else:
         sys.exit(0)
 
     print("This seems like it's the first time you run this program.")
-    print("For this program to work properly you have to configure it by editing '" + config_file + "'")
+    print("For this program to work properly you have to configure it by editing '" + config_file + "'.")
     print("In the same folder there's an example file 'config.example.py' you can copy to 'config.py'.")
+    sys.exit(0)
 
 spec = importlib.util.spec_from_file_location("config", user_config)
 config = importlib.util.module_from_spec(spec)
