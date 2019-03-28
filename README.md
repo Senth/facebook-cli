@@ -28,12 +28,16 @@ To create a database simply run `facebookcli --create-mysql-db` and follow the i
 ### 4. Schedule with cron (optional)
 #### Post birthdays
 This scripts randomizes the time you post your birthdays between 10:00 and 13:00 (10am and 1pm)
-`0	10	*	*	* python -c 'import random; import time; time.sleep(random.random() * 10800)' && LC_CTYPE=en_US.UTF-8 /usr/bin/python3 ~/.local/bin/facebookcli -b`
+```
+0	10	*	*	*	python -c 'import random; import time; time.sleep(random.random() * 10800)' && LC_CTYPE=en_US.UTF-8 /usr/bin/python3 ~/.local/bin/facebookcli -b
+```
 The `LC_CTYPE=en_US.UTF-8` is needed if messages or friend names has non ascii names like åäö. If not supplied the script will fail.
 
 #### Send scheduled messages
 To be able to send scheduled messages you have to run `facebookcli -r` every now and then. It's up to you how often you want to run your script; this script run every other minute. Note that it will only login to Facebook if there are any messages to send.
-`*/2	*	*	*	* LC_CTYPE=en_US.UTF-8 /usr/bin/python3 ~/.local/bin/facebookcli -r`
+```
+*/2	*	*	*	*	LC_CTYPE=en_US.UTF-8 /usr/bin/python3 ~/.local/bin/facebookcli -r
+```
 The `LC_CTYPE=en_US.UTF-8` is needed if messages or friend names has non ascii names like åäö. If not supplied the script will fail.
 
 ## Command usage
