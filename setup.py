@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='facebookcli',
     version='1.0.0',
-    description='Facebook command line interface using selenium to emulate human behavior',
+    description='Automatically post birthday wishes and schedule Facebook Messenger messages from the command line.',
     author='Matteus Magnusson',
     author_email='senth.wallace@gmail.com',
     url='https://github.com/Senth/facebook-cli',
