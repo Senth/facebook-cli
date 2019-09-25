@@ -24,6 +24,7 @@ class Birthday:
         more_people_to_post_to = True
 
         try:
+            print('Find people to post birthday wishes to')
             while more_people_to_post_to:
                 birthday_article_element = self.driver.find_element_by_xpath(
                     '//div[@title ="' + Birthday._BIRTHDAY_ARTICLE_TITLE + '"]')
@@ -42,6 +43,7 @@ class Birthday:
             # Get name
             name_element = person_element.find_element_by_xpath(".//div[@class = '" + Birthday._NAME_CSS_CLASS + "']")
             full_name = name_element.text
+            print('Found person ' + full_name)
 
             # Get birthday wish and post
             if full_name in BIRTHDAY_MESSAGES:
@@ -51,6 +53,8 @@ class Birthday:
                 # Return because page has been updated and people_elements is now a stale element
                 if posted:
                     return True
+            else:
+                print('Didn\'t find ' + full_name + ' in birthday messages')
 
         return False
 
@@ -59,11 +63,13 @@ class Birthday:
         """Post a birthday wish to the person if we haven't already done so"""
         try:
             # Get text box
+            print('Get text box')
             textarea = person_element.find_element_by_tag_name('textarea')
             textarea.send_keys(message)
             random_user_delay()
 
             # Post
+            print('Post message')
             post_button = person_element.find_element_by_xpath('.//input[@value="Post"]')
             post_button.submit()
             print(message)
@@ -80,8 +86,11 @@ class Birthday:
 
         message = BIRTHDAY_MESSAGES[full_name]
 
+        print('Found message: ' + message)
+
         # Replace with a default message
         if message in BIRTHDAY_MESSAGES_DEFAULT:
+            print('Replace with a randomized default message')
             default_messages = BIRTHDAY_MESSAGES_DEFAULT[message]
 
             # Randomize message
