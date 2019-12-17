@@ -10,6 +10,7 @@ from .utils import random_user_delay
 
 class Birthday:
     _BIRTHDAY_ARTICLE_TITLE = "Today's Birthdays"
+    _BIRTHDAY_CONTAINER_CSS_CLASS = 'bt bp bu'
     _BIRTHDAY_PEOPLE_CSS_CLASS = 'bk bv'
     _NAME_CSS_CLASS = 'bx by bs'
 
@@ -26,9 +27,10 @@ class Birthday:
         try:
             print('Find people to post birthday wishes to')
             while more_people_to_post_to:
-                birthday_article_element = self.driver.find_element_by_xpath(
-                    '//div[@title ="' + Birthday._BIRTHDAY_ARTICLE_TITLE + '"]')
-                birthday_people_element = birthday_article_element.find_elements_by_xpath(
+                birthday_container_element = self.driver.find_element_by_xpath(
+                    '//ul[@class ="' + Birthday._BIRTHDAY_CONTAINER_CSS_CLASS + '"]')
+                print('Found container element')
+                birthday_people_element = birthday_container_element.find_elements_by_xpath(
                     './/div[@class ="' + Birthday._BIRTHDAY_PEOPLE_CSS_CLASS + '"]')
 
                 more_people_to_post_to = Birthday._wish_birthday_for_all(birthday_people_element)
@@ -43,7 +45,7 @@ class Birthday:
             # Get name
             name_element = person_element.find_element_by_xpath(".//div[@class = '" + Birthday._NAME_CSS_CLASS + "']")
             full_name = name_element.text
-            print('Found person ' + full_name)
+            print('\nFound person ' + full_name)
 
             # Get birthday wish and post
             if full_name in BIRTHDAY_MESSAGES:
@@ -77,7 +79,7 @@ class Birthday:
             return True
 
         except (ElementNotInteractableException, ElementNotVisibleException):
-            # print('Already posted a wish for ' + full_name)
+            print('Already posted a wish')
             return False
 
     @staticmethod
