@@ -43,7 +43,7 @@ class Birthday:
         """Iterate through all people """
         for person_element in people_elements:
             # Get name
-            name_element = person_element.find_element_by_xpath(".//div[@class = '" + Birthday._NAME_CSS_CLASS + "']")
+            name_element = person_element.find_element_by_xpath(".//p[@class = '" + Birthday._NAME_CSS_CLASS + "']")
             full_name = name_element.text
             print('\nFound person ' + full_name)
 
