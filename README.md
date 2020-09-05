@@ -1,4 +1,8 @@
 # facebookcli
+## DISCLAIMER!!!
+Using this program violates Facebooks Terms and Services. I developed the program as a challenge to see what I could do. Use the program on your own risk!
+
+## Description
 Command Line Interface for various FB actions
 
 - **Birthday Wishes:** Automatically post birthday wishes to your friends on their wall (through messenger coming soon)
