@@ -10,7 +10,7 @@ setup(
     author_email='senth.wallace@gmail.com',
     url='https://github.com/Senth/facebook-cli',
     packages=['facebookcli'],
-    package_data={'':'help-description'},
+    package_data={'facebookcli': ['help-description']},
     include_package_data=True,
     data_files=[
         ('config/facebookcli/', ['config/config.example.py']),
