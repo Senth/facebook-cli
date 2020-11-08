@@ -1,3 +1,7 @@
 facebookcli.egg-info
 build
 dist
+
+.idea
+.vscode
+*/__pycache__
