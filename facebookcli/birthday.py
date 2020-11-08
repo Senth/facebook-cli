@@ -1,7 +1,9 @@
 from random import randrange
+from selenium import webdriver
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import ElementNotVisibleException
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.webelement import WebElement
 
 from .config import BIRTHDAY_MESSAGES
 from .config import BIRTHDAY_MESSAGES_DEFAULT
@@ -10,11 +12,8 @@ from .utils import random_user_delay
 
 class Birthday:
     _BIRTHDAY_ARTICLE_TITLE = "Today's Birthdays"
-    _BIRTHDAY_CONTAINER_CSS_CLASS = "bt bp bu"
-    _BIRTHDAY_PEOPLE_CSS_CLASS = "bk bv"
-    _NAME_CSS_CLASS = "bx by bs"
 
-    def __init__(self, driver):
+    def __init__(self, driver: webdriver.Chrome):
         self.driver = driver
 
     def wish_birthday(self):
@@ -27,49 +26,51 @@ class Birthday:
         try:
             print("Find people to post birthday wishes to")
             while more_people_to_post_to:
-                birthday_container_element = self.driver.find_element_by_xpath(
-                    '//ul[@class ="' + Birthday._BIRTHDAY_CONTAINER_CSS_CLASS + '"]'
-                )
-                print("Found container element")
-                birthday_people_element = (
-                    birthday_container_element.find_elements_by_xpath(
-                        './/div[@class ="' + Birthday._BIRTHDAY_PEOPLE_CSS_CLASS + '"]'
-                    )
-                )
+                more_people_to_post_to = self._wish_birthday_for_all()
 
-                more_people_to_post_to = Birthday._wish_birthday_for_all(
-                    birthday_people_element
-                )
-
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             print("No more birthdays today")
 
-    @staticmethod
-    def _wish_birthday_for_all(people_elements):
-        """Iterate through all people """
+    def _get_todays_birthdays_container(self) -> WebElement:
+        article: WebElement = self.driver.find_element_by_tag_name("article")
+
+        # Check if the article is today's birthdays
+        header: WebElement = article.find_element_by_tag_name("h3")
+        if header.text == "Today's Birthdays":
+            return article
+        else:
+            raise NoSuchElementException()
+
+    def _wish_birthday_for_all(self):
+        todays_birthdays_container = self._get_todays_birthdays_container()
+
+        people_elements_container: WebElement = (
+            todays_birthdays_container.find_element_by_tag_name("ul")
+        )
+        people_elements = people_elements_container.find_elements_by_xpath("*")
+
         for person_element in people_elements:
-            # Get name
-            name_element = person_element.find_element_by_xpath(
-                ".//p[@class = '" + Birthday._NAME_CSS_CLASS + "']"
-            )
-            full_name = name_element.text
-            print("\nFound person " + full_name)
+            posted = Birthday._wish_birthday_for(person_element)
+            if posted:
+                return True
 
-            # Get birthday wish and post
-            if full_name in BIRTHDAY_MESSAGES:
-                message = Birthday._get_message(full_name)
-                posted = Birthday._wish_birthday(person_element, message)
+    @staticmethod
+    def _wish_birthday_for(person_element: WebElement) -> bool:
+        name_element = person_element.find_element_by_xpath("a/div/p")
+        full_name = name_element.text
+        print(f"\nFound person {full_name}")
 
-                # Return because page has been updated and people_elements is now a stale element
-                if posted:
-                    return True
-            else:
-                print("Didn't find " + full_name + " in birthday messages")
+        # Get birthday wish and post
+        if full_name in BIRTHDAY_MESSAGES:
+            message = Birthday._get_message(full_name)
+            return Birthday._wish_birthday(person_element, message)
+        else:
+            print(f"Didn't find {full_name} in birthday messages")
 
         return False
 
     @staticmethod
-    def _wish_birthday(person_element, message):
+    def _wish_birthday(person_element: WebElement, message: str) -> bool:
         """Post a birthday wish to the person if we haven't already done so"""
         try:
             # Get text box
@@ -93,7 +94,7 @@ class Birthday:
             return False
 
     @staticmethod
-    def _get_message(full_name):
+    def _get_message(full_name: str) -> str:
         """Get the birthday wish/message for the specified friend"""
 
         message = BIRTHDAY_MESSAGES[full_name]

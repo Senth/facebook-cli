@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="facebookcli",
-    version="1.0.1",
+    version="1.0.2",
     description="Automatically post birthday wishes and schedule Facebook Messenger messages from the command line.",
     author="Matteus Magnusson",
     author_email="senth.wallace@gmail.com",
