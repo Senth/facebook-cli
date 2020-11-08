@@ -89,7 +89,8 @@ def main():
 
     # Birthday
     if args.birthday_wish:
-        Login.login(driver)
+        login = Login(driver)
+        login.login()
         birthday = Birthday(driver)
         birthday.wish_birthday()
     # Send Message
@@ -99,7 +100,8 @@ def main():
             print("Please supply the message with a --name NAME")
             exit(1)
 
-        Login.login(driver)
+        login = Login(driver)
+        login.login()
         messenger = Messenger(driver)
         messenger.send_message(args.name, args.send_message)
     # Create MySQL DB

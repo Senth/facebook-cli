@@ -15,10 +15,10 @@ class Driver:
             print(
                 "Please install it through your distributions package manager and set the correct path in config.py"
             )
-            exit(0)
+            exit(1)
 
     @staticmethod
-    def init_driver():
+    def init_driver() -> webdriver.Chrome:
         """Initializes chromedriver"""
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--no-sandbox")
