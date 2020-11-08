@@ -20,7 +20,11 @@ class Messenger:
         # Search for Facebook friend with specified name
         if conversation_url is None:
             friend_uid = self._find_friend_id(name)
-            conversation_url = 'https://mbasic.facebook.com/messages/read/?fbid=' + friend_uid + '&_rdr'
+            conversation_url = (
+                "https://mbasic.facebook.com/messages/read/?fbid="
+                + friend_uid
+                + "&_rdr"
+            )
 
         if not conversation_url is None:
             self._send_message(conversation_url, message)
@@ -31,13 +35,13 @@ class Messenger:
         self.driver.get(conversation_url)
         random_user_delay()
 
-        textarea = self.driver.find_element_by_tag_name('textarea')
+        textarea = self.driver.find_element_by_tag_name("textarea")
         textarea.send_keys(message)
         random_user_delay()
 
         send_button = self.driver.find_element_by_xpath('//input[@value="Send"]')
-#         send_button.submit()
-        print('Message sent.')
+        #         send_button.submit()
+        print("Message sent.")
 
     def _find_conversation_url(self, name):
         """Searches for recent conversations which has the specified name
@@ -45,8 +49,10 @@ class Messenger:
         :return url of the conversation, `None` if not found
         """
 
-        self.driver.get('https://mbasic.facebook.com/messages/' +
-                        '?ref_component=mbasic_home_header&ref_page=MMessagingThreadlistController&refid=11')
+        self.driver.get(
+            "https://mbasic.facebook.com/messages/"
+            + "?ref_component=mbasic_home_header&ref_page=MMessagingThreadlistController&refid=11"
+        )
         random_user_delay()
         people_elements_search = '//td[@class="t bw bx"]/div/h3/a'
         page = 1
@@ -64,14 +70,16 @@ class Messenger:
                 found_person = person_element.text
                 # Found conversation
                 if name == found_person:
-                    conversation_url = person_element.get_attribute('href')
-                    print('Found conversation url: ' + conversation_url)
+                    conversation_url = person_element.get_attribute("href")
+                    print("Found conversation url: " + conversation_url)
                     return conversation_url
 
             # Go to next page if it exists
             try:
-                see_older_messages_element = self.driver.find_element_by_xpath('//div[@id="see_older_threads"]/a')
-                url = see_older_messages_element.get_attribute('href')
+                see_older_messages_element = self.driver.find_element_by_xpath(
+                    '//div[@id="see_older_threads"]/a'
+                )
+                url = see_older_messages_element.get_attribute("href")
                 self.driver.get(url)
                 random_user_delay()
                 people_elements_search = '//h3[@class="bw ba bx"]/a'
@@ -87,7 +95,7 @@ class Messenger:
         :return uid of friend, `None` if not found
         """
 
-        self.driver.get('https://mbasic.facebook.com/friends/center/friends/?mff_nav=1')
+        self.driver.get("https://mbasic.facebook.com/friends/center/friends/?mff_nav=1")
         random_user_delay()
         page = 0
 
@@ -99,23 +107,25 @@ class Messenger:
 
                 # Get id from href url
                 if name == full_name:
-                    href = friend_element.get_attribute('href')
-                    match = search('uid=(\d*)', href)
+                    href = friend_element.get_attribute("href")
+                    match = search("uid=(\d*)", href)
                     friend_uid = match.group(1)
-                    print('Found uid: ' + friend_uid)
+                    print("Found uid: " + friend_uid)
                     return friend_uid
 
             # Go to the next page if it exists
             try:
                 self.driver.find_element_by_xpath('//div[@id="u_0_0"]')
                 self.driver.get(
-                    'https://mbasic.facebook.com/friends/center/friends/?ppk=' + str(page) + '&tid=u_0_0&bph=' + str(
-                        page) + '#friends_center_main')
+                    "https://mbasic.facebook.com/friends/center/friends/?ppk="
+                    + str(page)
+                    + "&tid=u_0_0&bph="
+                    + str(page)
+                    + "#friends_center_main"
+                )
                 random_user_delay()
                 page += 1
 
             except NoSuchElementException:
                 print("Didn't find friend " + full_name)
                 return None
-
-

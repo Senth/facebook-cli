@@ -10,42 +10,50 @@ from .utils import random_user_delay
 
 class Birthday:
     _BIRTHDAY_ARTICLE_TITLE = "Today's Birthdays"
-    _BIRTHDAY_CONTAINER_CSS_CLASS = 'bt bp bu'
-    _BIRTHDAY_PEOPLE_CSS_CLASS = 'bk bv'
-    _NAME_CSS_CLASS = 'bx by bs'
+    _BIRTHDAY_CONTAINER_CSS_CLASS = "bt bp bu"
+    _BIRTHDAY_PEOPLE_CSS_CLASS = "bk bv"
+    _NAME_CSS_CLASS = "bx by bs"
 
     def __init__(self, driver):
         self.driver = driver
 
     def wish_birthday(self):
         """Checks if there are any friends to post a birthday wish for"""
-        self.driver.get('https://mbasic.facebook.com/events/birthdays/')
+        self.driver.get("https://mbasic.facebook.com/events/birthdays/")
         random_user_delay()
 
         more_people_to_post_to = True
 
         try:
-            print('Find people to post birthday wishes to')
+            print("Find people to post birthday wishes to")
             while more_people_to_post_to:
                 birthday_container_element = self.driver.find_element_by_xpath(
-                    '//ul[@class ="' + Birthday._BIRTHDAY_CONTAINER_CSS_CLASS + '"]')
-                print('Found container element')
-                birthday_people_element = birthday_container_element.find_elements_by_xpath(
-                    './/div[@class ="' + Birthday._BIRTHDAY_PEOPLE_CSS_CLASS + '"]')
+                    '//ul[@class ="' + Birthday._BIRTHDAY_CONTAINER_CSS_CLASS + '"]'
+                )
+                print("Found container element")
+                birthday_people_element = (
+                    birthday_container_element.find_elements_by_xpath(
+                        './/div[@class ="' + Birthday._BIRTHDAY_PEOPLE_CSS_CLASS + '"]'
+                    )
+                )
 
-                more_people_to_post_to = Birthday._wish_birthday_for_all(birthday_people_element)
+                more_people_to_post_to = Birthday._wish_birthday_for_all(
+                    birthday_people_element
+                )
 
         except NoSuchElementException:
-            print('No more birthdays today')
+            print("No more birthdays today")
 
     @staticmethod
     def _wish_birthday_for_all(people_elements):
         """Iterate through all people """
         for person_element in people_elements:
             # Get name
-            name_element = person_element.find_element_by_xpath(".//p[@class = '" + Birthday._NAME_CSS_CLASS + "']")
+            name_element = person_element.find_element_by_xpath(
+                ".//p[@class = '" + Birthday._NAME_CSS_CLASS + "']"
+            )
             full_name = name_element.text
-            print('\nFound person ' + full_name)
+            print("\nFound person " + full_name)
 
             # Get birthday wish and post
             if full_name in BIRTHDAY_MESSAGES:
@@ -56,7 +64,7 @@ class Birthday:
                 if posted:
                     return True
             else:
-                print('Didn\'t find ' + full_name + ' in birthday messages')
+                print("Didn't find " + full_name + " in birthday messages")
 
         return False
 
@@ -65,21 +73,23 @@ class Birthday:
         """Post a birthday wish to the person if we haven't already done so"""
         try:
             # Get text box
-            print('Get text box')
-            textarea = person_element.find_element_by_tag_name('textarea')
+            print("Get text box")
+            textarea = person_element.find_element_by_tag_name("textarea")
             textarea.send_keys(message)
             random_user_delay()
 
             # Post
-            print('Post message')
-            post_button = person_element.find_element_by_xpath('.//input[@value="Post"]')
+            print("Post message")
+            post_button = person_element.find_element_by_xpath(
+                './/input[@value="Post"]'
+            )
             post_button.submit()
             print(message)
             random_user_delay()
             return True
 
         except (ElementNotInteractableException, ElementNotVisibleException):
-            print('Already posted a wish')
+            print("Already posted a wish")
             return False
 
     @staticmethod
@@ -88,18 +98,18 @@ class Birthday:
 
         message = BIRTHDAY_MESSAGES[full_name]
 
-        print('Found message: ' + message)
+        print("Found message: " + message)
 
         # Replace with a default message
         if message in BIRTHDAY_MESSAGES_DEFAULT:
-            print('Replace with a randomized default message')
+            print("Replace with a randomized default message")
             default_messages = BIRTHDAY_MESSAGES_DEFAULT[message]
 
             # Randomize message
             message = default_messages[randrange(len(default_messages))]
 
             # Replace $ with first name
-            first_name = full_name.split(' ', maxsplit=1)[0]
-            message = message.replace('$', first_name)
+            first_name = full_name.split(" ", maxsplit=1)[0]
+            message = message.replace("$", first_name)
 
         return message
